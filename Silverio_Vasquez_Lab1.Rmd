@@ -1,0 +1,58 @@
+---
+title: "Data607-Lab1"
+author: "Silverio Vasquez"
+date: "September 2, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Columns habitat and cap-color were picked because together they have 100% accuracy
+when former = leaves and latter = white.
+
+Column spore-print-color was picked because it has a 99.41% accuracy when value is green.
+
+```{r lab1}
+require(plyr)
+require(curl)
+ 
+df <-  read.table(curl("https://raw.githubusercontent.com/sjv1030/Data607-Lab1/master/agaricus-lepiota.data"),sep=",")
+dim(df)
+
+df_e <- subset(df[1],V1 == "e")
+nrow(df_e)
+
+df_p <- subset(df[1],V1 == "p")
+nrow(df_p)
+
+ans <- df[c(1,21,23,4)]
+colnames(ans) <- c("e_p","spore_print_color","habitat","cap_color")
+
+ans$e_p <- mapvalues(ans$e_p, from=c("e","p"), to=c("edible","poisonous"))
+
+ans$spore_print_color <- mapvalues(ans$spore_print_color, 
+                                   from=c("k","n","b","h","r","o","u","w","y"),
+                                   to=c("black","brown","buff","chocolate","green",
+                                        "orange","purple","white","yellow"))
+
+ans$habitat <- mapvalues(ans$habitat, from=c("g","l","m","p","u","w","d"), 
+                         to=c("grasses","leaves","meadows","path","urban","waste","woods"))
+
+ans$cap_color <- mapvalues(ans$cap_color, 
+                           from=c("n","b","r","u","w","y","c","g","p","e"),
+                           to=c("brown","buff","green","purple","white",
+                                "yellow","cinnamon", "gray","pink","red"))
+
+```
+
+Top of dataset:
+```{r ans-head}
+head(ans) # show top of dataset
+```
+
+Bottom of dataset:
+```{r ans-tail}
+tail(ans) # show bottom of dataset
+```
